@@ -1,0 +1,40 @@
+services:
+  # Laravelアプリケーション本体
+  app:
+    build:
+      context: . # プロジェクトルートをビルドコンテキストとして利用
+      dockerfile: ./.docker/php/Dockerfile # Dockerfileのパス
+    volumes:
+      - ./:/var/www/html # プロジェクトのファイルをコンテナと共有
+    depends_on:
+      - db # dbサービス（MySQL）が先に起動するよう指定
+
+  # Nginxウェブサーバー（container_nameを変更）
+  nginx:
+    image: nginx:latest
+    container_name: todo-app-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+
+  # MySQLデータベース
+  db:
+    image: mysql:8.0
+    ports:
+      - "3307:3306" # ホストマシンからMySQLコンテナにアクセスするためのポートマッピング
+    environment:
+      MYSQL_DATABASE: laravel_db # 作成するデータベース名
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: laravel_password
+    volumes:
+      - ./.docker/data:/var/lib/mysql # データベースのデータをローカルに保存
+
+networks:
+  # デフォルトネットワーク設定
+  default:
+    driver: bridge
