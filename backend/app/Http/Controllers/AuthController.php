@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Support\Facades\Log;
+
 
 class AuthController extends Controller
 {
@@ -56,9 +59,14 @@ class AuthController extends Controller
     }
 
     public function update(UpdateUserRequest $request)
-{
+    {
+    \Log::debug('Auth user:', ['user' => auth()->user()]);
     // 現在ログインしているユーザーを取得
     $user = $request->user();
+
+    if (!$user) {
+        return response()->json(['message' => '認証ユーザーが取得できません'], 401);
+    }
 
     // バリデーション済みのデータを取得
     $validated = $request->validated();
@@ -86,4 +94,28 @@ class AuthController extends Controller
         ]
     ], 200);
 }
+
+public function login(Request $request)
+    {
+        // バリデーション
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        // 認証試行
+        if (!Auth::attempt($credentials)) {
+            return response()->json(['message' => '認証に失敗しました'], 401);
+        }
+
+        $user = Auth::user();
+
+        // トークン発行（Sanctum利用）
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ]);
+    }
 }

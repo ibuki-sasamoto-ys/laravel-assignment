@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append([
             \Illuminate\Http\Middleware\HandleCors::class,
             \App\Http\Middleware\ConvertRequestKeysToSnakeCase::class,
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
