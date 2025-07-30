@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
   display: flex;
@@ -33,26 +33,26 @@ const Button = styled.button<{ disabled: boolean }>`
   width: 100%;
   padding: 0.6rem;
   font-size: 1rem;
-  background-color: ${({ disabled }) => (disabled ? '#ccc' : '#333')};
+  background-color: ${({ disabled }) => (disabled ? "#ccc" : "#333")};
   color: #fff;
   border: none;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const isValid = email !== '' && password !== '';
+  const isValid = email !== "" && password !== "";
 
   const handleLogin = async () => {
     if (!isValid) return;
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: email, // ← SimpleJWTでは username で送る必要あり
           password: password,
@@ -61,22 +61,21 @@ const Login: React.FC = () => {
 
       if (!res.ok) {
         const error = await res.json();
-        console.error('ログイン失敗:', error);
-        alert('ログインに失敗しました');
+        console.error("ログイン失敗:", error);
+        alert("ログインに失敗しました");
         return;
       }
 
       const data = await res.json();
-      console.log('ログイン成功:', data);
-      localStorage.setItem('access_token', data.access);
-      localStorage.setItem('refreshToken', data.refresh);
-      navigate('/');
+      console.log("ログイン成功:", data);
+      localStorage.setItem("access_token", data.access);
+      localStorage.setItem("refreshToken", data.refresh);
+      navigate("/");
     } catch (err) {
-      console.error('通信エラー:', err);
-      alert('通信中にエラーが発生しました');
+      console.error("通信エラー:", err);
+      alert("通信中にエラーが発生しました");
     }
   };
-
 
   return (
     <Wrapper>
@@ -84,15 +83,19 @@ const Login: React.FC = () => {
         <h2>ログイン</h2>
         <Input type="email" placeholder="メールアドレス" value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input type="password" placeholder="パスワード" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <Button disabled={!isValid} onClick={handleLogin}>ログイン</Button>
-        <p style={{ marginTop: '1rem' }}>
+        <Button disabled={!isValid} onClick={handleLogin}>
+          ログイン
+        </Button>
+        <p style={{ marginTop: "1rem" }}>
           <a href="#">パスワードを忘れた方はこちら（未実装）</a>
         </p>
       </FormSide>
       <InfoSide>
         <h3>初めてご利用の方</h3>
         <p>新規会員登録で便利な機能をご利用いただけます。</p>
-        <Button disabled={false} onClick={() => navigate('/register')}>新規会員登録</Button>
+        <Button disabled={false} onClick={() => navigate("/register")}>
+          新規会員登録
+        </Button>
       </InfoSide>
     </Wrapper>
   );
