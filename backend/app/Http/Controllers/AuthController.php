@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegisterUserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\JsonResponse;
@@ -13,24 +14,10 @@ use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
-    public function register(Request $request): JsonResponse
+    public function register(RegisterUserRequest $request): JsonResponse
     {
         // バリデーション
-        $validated = $request->validate([
-            'last_name' => 'required|string|max:255',
-            'first_name' => 'required|string|max:255',
-            'last_name_kana' => 'required|string|max:255',
-            'first_name_kana' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'tel' => 'required|string|max:20',
-            'postal' => 'required|string|max:10',
-            'prefecture' => 'required|string|max:100',
-            'city' => 'required|string|max:100',
-            'address' => 'required|string|max:255',
-            'building' => 'nullable|string|max:255',
-
-        ]);
+        $validated = $request->validated();
 
         // ユーザー作成
         $user = User::create([
