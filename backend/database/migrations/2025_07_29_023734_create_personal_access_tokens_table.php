@@ -8,6 +8,7 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * Sanctum personal access tokens table.
      */
     public function up(): void
     {

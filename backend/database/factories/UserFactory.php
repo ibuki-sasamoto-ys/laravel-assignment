@@ -24,7 +24,16 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'name' => fake()->name(),
+            'last_name' => fake()->lastName(),
+            'first_name' => fake()->firstName(),
+            'last_name_kana' => $this->toKatakana(fake()->lastName()),
+            'first_name_kana' => $this->toKatakana(fake()->firstName()),
+            'phone' => fake()->phoneNumber(),
+            'postal_code' => fake()->postcode(),
+            'prefecture' => fake()->city(),
+            'city' => fake()->city(),
+            'address' => fake()->streetAddress(),
+            'building' => fake()->optional()->word(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
@@ -40,5 +49,13 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * 文字列をカタカナに変換
+     */
+    private function toKatakana(string $value): string
+    {
+        return mb_convert_kana($value, 'KVC'); // 半角→全角カタカナ＋濁点
     }
 }
