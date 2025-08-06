@@ -80,29 +80,35 @@ class AuthController extends Controller
             'email' => $user->email,
         ]
     ], 200);
-}
+    }
 
-public function login(Request $request)
-    {
-        // バリデーション
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+    public function login(Request $request)
+        {
+            // バリデーション
+            $credentials = $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ]);
 
-        // 認証試行
-        if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => '認証に失敗しました'], 401);
+            // 認証試行
+            if (!Auth::attempt($credentials)) {
+                return response()->json(['message' => '認証に失敗しました'], 401);
+            }
+
+            $user = Auth::user();
+
+            // トークン発行（Sanctum利用）
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+            ]);
         }
 
-        $user = Auth::user();
-
-        // トークン発行（Sanctum利用）
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-        ]);
-    }
+    public function mypage(Request $request)
+        {
+            // 認証済みユーザー情報を返す
+            return response()->json($request->user());
+        }
 }
