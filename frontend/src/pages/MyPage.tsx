@@ -92,10 +92,13 @@ const MyPage: React.FC = () => {
 
     const fetchUserInfo = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/auth/me/', {
+        const res = await fetch('http://localhost:8080/api/auth/mypage', {
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
+           'Content-Type': 'application/json',
           },
+           credentials: 'include',
         });
 
         if (!res.ok) throw new Error('ユーザー情報取得に失敗');
@@ -123,12 +126,13 @@ const MyPage: React.FC = () => {
   const handleSave = async () => {
     const token = localStorage.getItem('access_token');
     try {
-      const res = await fetch('http://127.0.0.1:8000/auth/update/', {
+      const res = await fetch('http://localhost:8080/api/auth/update/', {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(form),
       });
 

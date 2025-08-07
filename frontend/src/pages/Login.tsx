@@ -50,14 +50,20 @@ const Login: React.FC = () => {
     if (!isValid) return;
 
     try {
-      const res = await fetch("http://localhost:8080/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        // 1. CSRF Cookieを取得（必須）
+        await fetch("http://localhost:8080/sanctum/csrf-cookie", {
+          credentials: "include",
+        });
+
+        // 2. ログイン処理
+        const res = await fetch("http://localhost:8080/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: email, // ← SimpleJWTでは username で送る必要あり
           password: password,
         }),
-      });
+        });
 
       if (!res.ok) {
         const error = await res.json();

@@ -10,7 +10,7 @@ const ChangePassword: React.FC = () => {
   const handleChangePassword = async () => {
     const token = localStorage.getItem('access_token');
     try {
-      const res = await fetch('http://127.0.0.1:8000/auth/change-password/', {
+      const res = await fetch('http://localhost:8080/api/auth/change-password/', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
